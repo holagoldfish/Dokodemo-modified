@@ -1,0 +1,84 @@
+package util;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import junit.framework.Assert;
+
+import org.testng.Reporter;
+import org.uncommons.reportng.Comm;
+
+public class DataHelper {
+	static String projectFullPath;
+	static String caseName;
+	static Map<String, ArrayList> dataMap = new HashMap<String, ArrayList>();
+	static Object object;
+
+	public static void initFullAppData(Object obj) {
+		object = obj;
+		dataMap.clear();
+
+		String fileName = obj.getClass().getSimpleName() + ".csv";
+		fileName = "src/test/java/data/" + fileName;
+		try {
+			String rec = null;
+			String[] argsArr = null;
+			int row = 0;
+			int col = 0;
+			BufferedReader fi = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "utf8"));
+			StringBuffer allDataBuffer = new StringBuffer();
+			while ((rec = fi.readLine()) != null) {
+				if (row == 0) {
+					argsArr = rec.split(",");
+					col = argsArr.length;
+				} else {
+					allDataBuffer.append(rec);
+					allDataBuffer.append("\n");
+				}
+				row++;
+			}
+			String[] rowValueArray = allDataBuffer.toString().split("\n");
+			if (rowValueArray != null) {
+				if (rowValueArray.length != 0) {
+					for (int cell = 0; cell < col; cell++) {
+						ArrayList list = new ArrayList<String>();
+						for (int rowValue = 0; rowValue < rowValueArray.length; rowValue++) {
+							String[] valueArray = rowValueArray[rowValue].split(",");
+							list.add(valueArray[cell]);
+						}
+						dataMap.put(argsArr[cell], list);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static String getAppData(String varName, int index) {
+		if (varName.indexOf(":") < 0) {
+			varName = object.getClass().getSimpleName() + "_data:" + varName;
+		}
+		ArrayList list = dataMap.get(varName);
+		if (list == null || list.size() < 1) {
+			list = dataMap.get(varName + ":hide");
+		}
+		if (index <= 0 || index > list.size()) {
+			Assert.fail("-----------Data (" + varName + ") index is out of range ----------");
+		}
+		String data = (String) list.get(index - 1);
+		if (Comm.dataBeingUsed.get(Reporter.getCurrentTestResult().getName()) == null) {
+			ArrayList<String> list_data = new ArrayList<String>();
+			list_data.add(varName + "=" + data);
+			Comm.dataBeingUsed.put(Reporter.getCurrentTestResult().getName(), list_data);
+		}else{
+			Comm.dataBeingUsed.get(Reporter.getCurrentTestResult().getName()).add(varName + "=" + data);			
+		}
+		System.out.println(Reporter.getCurrentTestResult().getName()+"-----------+++++++++++");
+		return data;
+	}
+}

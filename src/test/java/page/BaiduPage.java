@@ -1,0 +1,26 @@
+package page;
+
+import com.zendaimoney.Dokodemo.html.Button;
+import com.zendaimoney.Dokodemo.html.PageModel;
+import com.zendaimoney.Dokodemo.html.TextInput;
+
+
+
+
+
+public class BaiduPage extends PageModel{
+	
+	public TextInput input=new TextInput("input.s_ipt", this, "search", "搜索内容");
+	
+	public Button search =new Button("input[id=su]", this, "baidu", "百度一下");
+
+	
+	
+
+	public BaiduPage(String selector, PageModel parent, String name,
+			String description) {
+		super(selector, parent, name, description);
+		// TODO Auto-generated constructor stub
+	}
+
+}

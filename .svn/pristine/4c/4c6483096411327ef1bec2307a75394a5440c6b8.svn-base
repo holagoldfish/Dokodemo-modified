@@ -1,0 +1,53 @@
+package com.zendaimoney.Dokodemo.testcase;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+
+import com.zendaimoney.Dokodemo.ETestWebUIBaseCase;
+import com.zendaimoney.Dokodemo.engine.Browser;
+import com.zendaimoney.Dokodemo.page.AlertPage;
+import com.zendaimoney.Dokodemo.util.BrowserUtil;
+
+public class AlertTest extends ETestWebUIBaseCase {
+
+	@Test
+	public void test() throws Exception {
+		Browser ie = Browser.start("E:\\1234.html");
+		AlertPage page = ie.cast(com.zendaimoney.Dokodemo.page.AlertPage.class);
+		// page.alert.click();
+		// sleep(2);
+		// page.alert.deal_dialog("确定");
+
+		page.prompt.click();
+		// page.prompt.deal_prompt("hjjjgjjgj", true);
+		BrowserUtil.close_all_ies();
+	}
+
+	// @Test
+	public void testAAA() {
+		String filename = "[失败]元素找不到:wd(搜索).click()操作，找不到元素".replaceAll("\\s", "_").replaceAll(":", "").replaceAll("\"", " ").replaceAll("\\.", " ") + ".png";
+		filename = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + "-" + filename;
+		System.out.println(filename);
+	}
+
+	// @Test
+	public void testAA() {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("minghongjun", "joyce");
+		System.out.println(map.get("minghongjun"));
+		if (!(map.get("joyce") == null)) {
+			System.out.println(map.get("joyce"));
+		}
+	}
+
+	@AfterMethod
+	public void tearDown() throws Exception {
+		BrowserUtil.close_all_ies();
+	}
+
+}

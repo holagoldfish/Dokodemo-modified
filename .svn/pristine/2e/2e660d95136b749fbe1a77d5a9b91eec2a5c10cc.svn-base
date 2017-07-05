@@ -1,0 +1,58 @@
+package page;
+
+
+
+import com.zendaimoney.Dokodemo.html.Button;
+import com.zendaimoney.Dokodemo.html.CheckBox;
+import com.zendaimoney.Dokodemo.html.Element;
+import com.zendaimoney.Dokodemo.html.ElementList;
+import com.zendaimoney.Dokodemo.html.Link;
+import com.zendaimoney.Dokodemo.html.PageModel;
+
+public class FortunePage extends PageModel{
+	
+	public Button business=new Button("dt:contains(业务管理)",this , description, description);
+	
+	public Button invest=new Button("a:contains(投资管理)",this , description, description);
+	
+//	public IFrame frame=new IFrame("#ifmRight", this, "iframe in the html", "这是一个iframe");
+	
+	
+	
+//	public static class IFrame extends PageModel{
+		
+		public ElementList<EachItem> lists=new ElementList<EachItem> (EachItem.class, "div.yiban>table>tbody>tr", this, "table in the frame", "表单");
+		
+		public static class EachItem extends PageModel{
+			public CheckBox choice=new CheckBox("input[name=item]", this, "checkbox in the frame", "编号");
+			public Link name=new Link("a[href^=/carfortune/fortune/invest_add_init]", this, "name in the frame", "客户姓名");
+			
+
+			public EachItem(String selector, PageModel parent, String name,String description) {
+				super(selector, parent, name, description);				
+			}
+			
+			
+			
+		}
+
+//		public IFrame(String selector, PageModel parent, String name,String description) {
+//			super(selector, parent, name, description);
+//		}
+//		
+//	}
+	
+	
+	
+	
+	
+	
+
+	public FortunePage(String selector, PageModel parent, String name,
+			String description) {
+		super(selector, parent, name, description);
+		// TODO Auto-generated constructor stub
+	}
+	
+
+}

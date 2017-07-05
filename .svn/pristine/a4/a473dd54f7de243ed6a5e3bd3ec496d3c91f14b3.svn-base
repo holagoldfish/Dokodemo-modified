@@ -1,0 +1,72 @@
+package com.zendaimoney.Dokodemo.page;
+
+import com.zendaimoney.Dokodemo.html.Element;
+import com.zendaimoney.Dokodemo.html.ElementList;
+import com.zendaimoney.Dokodemo.html.IFrame;
+import com.zendaimoney.Dokodemo.html.PageModel;
+
+
+import com.zendaimoney.Dokodemo.html.TextInput;
+
+
+public class IFramePage extends PageModel{
+	
+	public ElementList<TextInput> lists=new ElementList<TextInput>(TextInput.class, "div.tbody>div>input", this, "lists", "集合");
+	
+	//iframe的定位必须要用.  # 来定位    
+	public Frame frame=new Frame(".body_new", this, "iframe", "iframe");   
+	
+	public static class Frame extends PageModel{
+		
+		public ElementList<EachItem> lists=new ElementList<EachItem>(EachItem.class, "div[name=hero]>div", this, "lists", "集合");
+		public static class EachItem extends PageModel{
+			public TextInput input1=new TextInput("input.red", this, "input", "input");
+			public TextInput input2=new TextInput("input.blue", this, "input", "input");
+			
+			public EachItem(String selector, PageModel parent, String name,
+					String description) {
+				super(selector, parent, name, description);
+				// TODO Auto-generated constructor stub
+			}
+			
+			
+		}
+		
+		
+		public TextInput t=new TextInput("input[name=hjg1]", this, "input", "input");
+		public Frame(String selector, PageModel parent, String name,
+				String description) {
+			super(selector, parent, name, description);
+			// TODO Auto-generated constructor stub
+		}
+		
+		
+	}
+	
+	public Kk k=new Kk(".body_new", this, description, description);
+	
+	
+	public static class Kk extends IFrame{
+		
+		public TextInput iin=new TextInput("input[name=hjg11]", this, "input", "input");
+		
+		
+
+		public Kk(String selector, PageModel parent, String name,String description) {
+			super(selector, parent, name, description);
+		}
+		
+	}
+	
+	
+	
+	
+	
+
+	public IFramePage(String selector, PageModel parent, String name,String description) {
+		super(selector, parent, name, description);
+	}
+
+	
+
+}

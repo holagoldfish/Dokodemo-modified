@@ -1,0 +1,81 @@
+package com.zendaimoney.Dokodemo.testcase;
+
+import junit.framework.Assert;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import com.zendaimoney.Dokodemo.ETestWebUIBaseCase;
+import com.zendaimoney.Dokodemo.engine.Browser;
+import com.zendaimoney.Dokodemo.page.TaobaoPage;
+import com.zendaimoney.Dokodemo.util.BrowserUtil;
+
+
+
+public class TaobaoTest extends ETestWebUIBaseCase{
+	
+
+	
+	@Test
+	public void test_demo1() throws Exception{
+		
+		Browser ie = Browser.start("http://www.taobao.com");
+		TaobaoPage taobao = ie.cast(com.zendaimoney.Dokodemo.page.TaobaoPage.class);
+		taobao.search.set("nudie");
+		taobao.shop.click();
+		taobao.doSearch.click();
+
+		BrowserUtil.close_all_ies();
+
+	}
+	
+	@Test
+	public void test_demo2_鼠标mouseover事件1() throws Exception{
+		
+		Browser ie = Browser.start("http://www.taobao.com");
+		TaobaoPage taobao = ie.cast(com.zendaimoney.Dokodemo.page.TaobaoPage.class);
+		taobao.game.fire_event("onmouseover");
+		BrowserUtil.close_all_ies();
+
+	}
+	
+	@Test
+	public void test_page下放控件集合() throws Exception{
+		BrowserUtil.close_all_ies();
+		Browser ie = Browser.start("http://www.taobao.com");
+		TaobaoPage taobao = ie.cast(com.zendaimoney.Dokodemo.page.TaobaoPage.class);
+		//打印商品导航栏第一个的文本
+		System.out.println(taobao.menu.get(0).text());
+		System.out.println(taobao.menu.get(1).text());
+		System.out.println(taobao.menu.get(2).text());
+//		taobao.menu.get("手机数码").click();
+		//根据文本查找
+		System.out.println(taobao.menu.get("运动户外").exist());
+		System.out.println(taobao.menu.get("动户").exist());
+		taobao.menu.get(1).fire_event("onmouseover");
+		Thread.sleep(1000);
+		
+
+	}
+	
+	
+	@Test
+	public void test_控件集合里放submodel() throws Exception{
+		
+		Browser ie = Browser.start("http://list.taobao.com/itemlist/nvzhuang2011a.htm?spm=1.6659421.a21471d.6.KitvcS&cat=50906001&isprepay=1&random=false&as=0&viewIndex=1&commend=all&atype=b&fl=Shangpml&style=grid&same_info=1&tid=0&olu=yes&isnew=2&smc=1&_input_charset=utf-8&md=5221");
+		TaobaoPage taobao = ie.cast(com.zendaimoney.Dokodemo.page.TaobaoPage.class);
+		System.out.println(taobao.itmes.get(1).price.text());
+//		taobao.itmes.get(1).image.click();
+//		//ie窗口切换
+//		ie.last_ie();
+//		System.out.println(ie.title());
+////		taobao.gam1e.click();
+		BrowserUtil.close_all_ies();
+
+	}
+	
+	
+}

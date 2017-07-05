@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="WebDriver compatibility test" thread-count="4" parallel="tests">
+	<listeners>
+		<!-- <listener class-name="cases.MyTestListener" /> -->
+		<listener class-name="org.uncommons.reportng.HTMLReporter" />
+		<listener class-name="org.uncommons.reportng.JUnitXMLReporter" />
+	</listeners>
+
+	<test name="AlertTest">
+		<classes>
+			<class name="com.zendaimoney.Dokodemo.testcase.AlertTest" />
+		</classes>
+	</test>
+
+	<!-- <test name="baidu2test"> <classes> <class name="com.testng.test.C" 
+		/> </classes> </test> -->
+</suite>

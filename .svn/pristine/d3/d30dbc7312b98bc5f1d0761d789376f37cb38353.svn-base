@@ -1,0 +1,312 @@
+package com.zendaimoney.Dokodemo.logger;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.testng.Reporter;
+import org.uncommons.reportng.Comm;
+
+import com.zendaimoney.Dokodemo.engine.Browser;
+
+/**
+ * 
+ * 
+ */
+public class LogUtils {
+
+	private static String generateRandomFilename(String ex) {
+		String filename = ex.replaceAll("\\s", "_").replaceAll(":", "").replaceAll("\"", " ").replaceAll("\\.", " ") + ".png";
+		filename = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date()) + "-" + filename;
+		return filename;
+	}
+
+	public static void takeScreenShot(WebDriver driver, String filename) {
+		File scrFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
+		String destFileName = "test-output\\html\\screenshot\\" + filename;
+		try {
+			File f2 = new File(destFileName);
+			FileUtils.copyFile(scrFile, f2);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		Comm.testNameInvokeImg.put(Reporter.getCurrentTestResult().getName(), "screenshot\\" + filename);
+	}
+
+	private static final String PASSED = "passed";
+	private static final String FAILED = "failed";
+
+	/**
+	 * 日志不需要再在TC中初始化了，框架会在TC执行完成后统一生成日志
+	 * 
+	 * @param Clazz
+	 */
+	@Deprecated
+	public static void createDoc(Class<?> Clazz) {
+		// ETestLogListener.createDoc(Clazz);
+	}
+
+	/**
+	 * 获取数据驱动的方法的参数值成功
+	 * 
+	 * @param message
+	 * @throws Exception
+	 */
+
+	public static void setDataPrepareFailed(String message, String exception) throws Exception {
+		Comm.operateStep.add(String.format("[失败]:%s,[Error]%s", message, exception));
+		LogHandler.setStep("readData", "xml", FAILED, "", "", String.format("[失败]:%s,[Error]%s", message, exception));
+		if (Comm.testNameInvokeImg.get(Reporter.getCurrentTestResult().getName()) == null) {
+			String filename = generateRandomFilename(exception);
+			takeScreenShot(Browser.getWebDriver(), filename);
+			Comm.testNameInvokeImg.put(Reporter.getCurrentTestResult().getName(), "screenshot\\" + filename);
+		}
+		throw new Exception(exception);
+	}
+
+	/**
+	 * 获取数据驱动的方法的参数值失败
+	 * 
+	 * @param message
+	 * @throws Exception
+	 */
+	public static void setDataPreparePassed(String message) {
+		Comm.operateStep.add(String.format("[成功]:%s", message));
+		LogHandler.setStep("readData", "xml", PASSED, "", "", String.format("[成功]:%s", message));
+		// throw new Exception(String.format("[成功]:%s", message));
+	}
+
+	/**
+	 * 浏览器操作失败日志记录
+	 * 
+	 * @param type
+	 * @param operation
+	 * @param url
+	 * @throws Exception
+	 */
+
+	public static void setBrowserFailed(String type, String operation, String url, String exception) throws Exception {
+		Comm.operateStep.add(String.format("[中止]%s[操作]:%s操作,[Error]%s", type, operation, exception));
+		LogHandler.setStep(type, "", FAILED, operation, url, String.format("[中止]%s[操作]:%s操作,[Error]%s", type, operation, exception));
+		if (Comm.testNameInvokeImg.get(Reporter.getCurrentTestResult().getName()) == null) {
+			String filename = generateRandomFilename(exception);
+			takeScreenShot(Browser.getWebDriver(), filename);
+			Comm.testNameInvokeImg.put(Reporter.getCurrentTestResult().getName(), "screenshot\\" + filename);
+		}
+		throw new Exception(exception);
+	}
+
+	public static void setBrowserWarned(String type, String operation, String url, String exception) {
+		Comm.operateStep.add(String.format("[警告]%s[操作]:%s操作,[Error]%s", type, operation, exception));
+		LogHandler.setStep(type, "", PASSED, operation, url, String.format("[警告]%s[操作]:%s操作,[Error]%s", type, operation, exception));
+		// throw new Exception(String.format("[警告]%s[操作]:%s操作,[Error]%s", type,
+		// operation, exception));
+	}
+
+	/**
+	 * 浏览器操作成功日志记录
+	 * 
+	 * @param type
+	 * @param operation
+	 * @param url
+	 * @throws Exception
+	 */
+	public static void setBrowserPassed(String type, String operation, String url) {
+		Comm.operateStep.add(String.format("[成功]%s[操作],%s(%s)", type, operation, url));
+		LogHandler.setStep(type, "", PASSED, operation, url, String.format("[成功]%s[操作],%s(%s)", type, operation, url));
+		// throw new Exception(String.format("[成功]%s[操作],%s(%s)", type,
+		// operation, url));
+	}
+
+	/**
+	 * 成功进行浏览器cast操作
+	 * 
+	 * @param type
+	 * @param operation
+	 * @param model
+	 * @param url
+	 * @throws Exception
+	 */
+	public static void setBrowserPassed(String type, String operation, String model, String url) {
+		Comm.operateStep.add(String.format("[成功]页面模型操作,%s.(%s.class)", operation, model));
+		LogHandler.setStep(type, "", PASSED, operation, url, String.format("[成功]页面模型操作,%s.(%s.class)", operation, model));
+		// throw new Exception(String.format("[成功]页面模型操作,%s.(%s.class)",
+		// operation, model));
+	}
+
+	/**
+	 * 进行浏览器cast操作失败
+	 * 
+	 * @param type
+	 * @param operation
+	 * @param model
+	 * @param url
+	 * @throws Exception
+	 */
+	public static void setBrowserFailed(String type, String operation, String model, String url, String exception) throws Exception {
+		Comm.operateStep.add(String.format("[失败]页面模型操作,%s.(%s.class),[Error]%s", operation, model, exception));
+		LogHandler.setStep(type, "", FAILED, operation, url, String.format("[失败]页面模型操作,%s.(%s.class),[Error]%s", operation, model, exception));
+		if (Comm.testNameInvokeImg.get(Reporter.getCurrentTestResult().getName()) == null) {
+			String filename = generateRandomFilename(exception);
+			takeScreenShot(Browser.getWebDriver(), filename);
+			Comm.testNameInvokeImg.put(Reporter.getCurrentTestResult().getName(), "screenshot\\" + filename);
+		}
+		throw new Exception(exception);
+	}
+
+	/**
+	 * 成功进行set value操作
+	 * 
+	 * @param url
+	 * @param operation
+	 * @param value
+	 * @param element
+	 * @throws Exception
+	 */
+	public static void setElementPassed(String url, String operation, String element) {
+		Comm.operateStep.add(String.format("[成功]%s.%s操作", element, operation));
+		LogHandler.setStep("set", element, PASSED, operation, url, String.format("[成功]%s.%s操作", element, operation));
+		// throw new Exception(String.format("[成功]%s.%s操作", element,
+		// operation));
+	}
+
+	/**
+	 * 成功进行set value操作
+	 * 
+	 * @param url
+	 * @param operation
+	 * @param value
+	 * @param element
+	 * @throws Exception
+	 */
+	public static void setElementPassed(String url, String operation, String value, String element) {
+		Comm.operateStep.add(String.format("[成功]%s.%s(%s)操作", element, operation, value));
+		LogHandler.setStep("set", element, PASSED, operation, url, String.format("[成功]%s.%s(%s)操作", element, operation, value));
+		// throw new Exception(String.format("[成功]%s.%s(%s)操作", element,
+		// operation, value));
+	}
+
+	/**
+	 * 进行set value操作失败
+	 * 
+	 * @param url
+	 * @param operation
+	 * @param value
+	 * @param element
+	 * @throws Exception
+	 */
+	public static void setElementFailed(String url, String operation, String element, String exception) throws Exception {
+		Comm.operateStep.add(String.format("[失败]%s.%s操作,[Error]%s", element, operation, exception));
+		LogHandler.setStep("set", element, FAILED, operation, url, String.format("[失败]%s.%s操作,[Error]%s", element, operation, exception));
+		if (Comm.testNameInvokeImg.get(Reporter.getCurrentTestResult().getName()) == null) {
+			String filename = generateRandomFilename(exception);
+			takeScreenShot(Browser.getWebDriver(), filename);
+			Comm.testNameInvokeImg.put(Reporter.getCurrentTestResult().getName(), "screenshot\\" + filename);
+		}
+		throw new Exception(exception);
+	}
+
+	/**
+	 * 进行set value操作失败
+	 * 
+	 * @param url
+	 * @param operation
+	 * @param value
+	 * @param element
+	 * @throws Exception
+	 */
+	public static void setElementFailed(String url, String operation, String value, String element, String exception) throws Exception {
+		Comm.operateStep.add(String.format("[失败]%s.%s(%s)操作,[Error]%s", element, operation, value, exception));
+		LogHandler.setStep("set", element, FAILED, operation, url, String.format("[失败]%s.%s(%s)操作,[Error]%s", element, operation, value, exception));
+		if (Comm.testNameInvokeImg.get(Reporter.getCurrentTestResult().getName()) == null) {
+			String filename = generateRandomFilename(exception);
+			takeScreenShot(Browser.getWebDriver(), filename);
+			Comm.testNameInvokeImg.put(Reporter.getCurrentTestResult().getName(), "screenshot\\" + filename);
+		}
+		throw new Exception(exception);
+	}
+
+	/**
+	 * 元素找不到日志记录
+	 * 
+	 * @param type
+	 * @param operation
+	 * @param element
+	 * @throws Exception
+	 */
+	public static void setElementEmpty(String url, String operation, String element) throws Exception{
+		Comm.operateStep.add(String.format("[失败]元素找不到:%s.%s操作，找不到元素", element, operation));
+		LogHandler.setStep("set", element, FAILED, operation, url, String.format("[失败]元素找不到:%s.%s操作，找不到元素", element, operation));
+		if (Comm.testNameInvokeImg.get(Reporter.getCurrentTestResult().getName()) == null) {
+			String filename = generateRandomFilename(String.format("[失败]元素找不到:%s.%s操作，找不到元素", element, operation));
+			takeScreenShot(Browser.getWebDriver(), filename);
+			Comm.testNameInvokeImg.put(Reporter.getCurrentTestResult().getName(), "screenshot\\" + filename);
+		}
+		throw new Exception(String.format("[失败]元素找不到:%s.%s操作，找不到元素", element, operation));
+	}
+
+	/**
+	 * 比较文本或数据成功
+	 * 
+	 * @param url
+	 * @param operation
+	 * @param element
+	 * @param expect
+	 * @param actual
+	 * @throws Exception
+	 */
+	public static void setAssertPassed(String url, String operation, String element, String expect, String actual, String message) {
+		Comm.operateStep.add(String.format("[成功]%s,实际值:%s, 期望值:%s", message, actual, expect));
+		LogHandler.setStep("verify", element, PASSED, operation, url, String.format("[成功]%s,实际值:%s, 期望值:%s", message, actual, expect));
+		// throw new Exception(String.format("[成功]%s,实际值:%s, 期望值:%s", message,
+		// actual, expect));
+	}
+
+	/**
+	 * 比较文本或数据失败
+	 * 
+	 * @param url
+	 * @param operation
+	 * @param element
+	 * @param expect
+	 * @param actual
+	 * @throws Exception
+	 */
+	public static void setAssertFailed(String url, String operation, String element, String expect, String actual, String message) throws Exception{
+		Comm.operateStep.add(String.format("[失败]%s,实际值:%s,期望值:%s", message, actual, expect));
+		LogHandler.setStep("verify", element, FAILED, operation, url, String.format("[失败]%s,实际值:%s,期望值:%s", message, actual, expect));
+		if (Comm.testNameInvokeImg.get(Reporter.getCurrentTestResult().getName()) == null) {
+			String filename = generateRandomFilename(String.format("[失败]%s,实际值:%s,期望值:%s", message, actual, expect));
+			takeScreenShot(Browser.getWebDriver(), filename);
+			Comm.testNameInvokeImg.put(Reporter.getCurrentTestResult().getName(), "screenshot\\" + filename);
+		}
+		throw new Exception(String.format("[失败]%s,实际值:%s,期望值:%s", message, actual, expect));
+	}
+
+	/**
+	 * sleep操作日志记录
+	 * 
+	 * @param type
+	 * @param operation
+	 * @param element
+	 * @throws Exception
+	 */
+	public static void setSleep(String seconds) {
+		Comm.operateStep.add(String.format("[警告]Sleep(%s)", seconds));
+		LogHandler.setStep("sleep", "element", PASSED, "", "", String.format("[警告]Sleep(%s)", seconds));
+		// throw new Exception(String.format("[警告]Sleep(%s)", seconds));
+	}
+
+	public static void setMessage(String message) {
+		Comm.operateStep.add(String.format("[用户]Log(%s)", message));
+		LogHandler.setStep("log", "element", PASSED, "", "", String.format("[用户]Log(%s)", message));
+		// throw new Exception(String.format("[用户]Log(%s)", message));
+	}
+
+}

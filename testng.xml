@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="WebDriver compatibility test" thread-count="4" parallel="tests">
+	<listeners>
+		<!-- <listener class-name="cases.MyTestListener" /> -->
+		<listener class-name="org.uncommons.reportng.HTMLReporter" />
+		<listener class-name="org.uncommons.reportng.JUnitXMLReporter" />
+		<!-- <listener class-name="com.zendaimoney.Dokodemo.listener.IInvokedMethodListener" /> -->
+	</listeners>
+	
+	
+	<test name="FortunecustomerText">
+		<classes>
+			<class name="cases.FortunecustomerText" >
+			</class>
+		</classes>
+	</test> 
+
+
+	<!--Fortune登录
+	<test name="FortuneloginText">
+		<classes>
+			<class name="cases.FortuneloginText">	 
+			
+          </class>
+		</classes>
+	</test>
+	-->
+	
+    <!-- <test name="FortunecustomerText">
+		<classes>
+			<class name="cases.FortunecustomerText" >
+			    <methods preserve-order="true">
+	              <include name="InputRightPwdTest" />
+	              <include name="CheckCustomerTest" />
+	           </methods>				   
+			</class>
+		</classes>
+	</test>  -->
+	
+	<!--  <test name="FortuneText">
+		<classes>
+			<class name="cases.FortunecustomerText" >
+			</class>
+		</classes>
+	</test> -->
+	
+	
+	<!--	<test name="UCLoginTest">
+		<classes>
+			<class name="cases.UCLoginTest" />
+		</classes>
+	</test>-->
+	
+
+	<!-- <test name="baidu2test"> <classes> <class name="com.testng.test.C" 
+		/> </classes> </test> -->
+</suite>

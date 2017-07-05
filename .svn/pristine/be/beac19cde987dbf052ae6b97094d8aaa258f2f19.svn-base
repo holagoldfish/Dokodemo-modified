@@ -1,0 +1,304 @@
+// Decompiled by Jad v1.5.8e2. Copyright 2001 Pavel Kouznetsov.
+// Jad home page: http://kpdus.tripod.com/jad.html
+// Decompiler options: packimports(3) fieldsfirst ansi space 
+// Source File Name:   ReportNGUtils.java
+
+package org.uncommons.reportng;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.*;
+import org.testng.*;
+
+// Referenced classes of package org.uncommons.reportng:
+//			Comm
+
+public class ReportNGUtils
+{
+
+	private static final NumberFormat DURATION_FORMAT = new DecimalFormat("#0.000");
+
+	public ReportNGUtils()
+	{
+	}
+
+	public long getDuration(ITestContext context)
+	{
+		long duration = getDuration(context.getPassedConfigurations().getAllResults());
+		duration += getDuration(context.getPassedTests().getAllResults());
+		duration += getDuration(context.getSkippedConfigurations().getAllResults());
+		duration += getDuration(context.getSkippedTests().getAllResults());
+		duration += getDuration(context.getFailedConfigurations().getAllResults());
+		duration += getDuration(context.getFailedTests().getAllResults());
+		return duration;
+	}
+
+	private long getDuration(Set results)
+	{
+		long duration = 0L;
+		for (Iterator iterator = results.iterator(); iterator.hasNext();)
+		{
+			ITestResult result = (ITestResult)iterator.next();
+			duration += result.getEndMillis() - result.getStartMillis();
+		}
+
+		return duration;
+	}
+
+	public String formatDuration(long startMillis, long endMillis)
+	{
+		long elapsed = endMillis - startMillis;
+		return formatDuration(elapsed);
+	}
+
+	public String formatDuration(long elapsed)
+	{
+		double seconds = (double)elapsed / 1000D;
+		return DURATION_FORMAT.format(seconds);
+	}
+
+	public List getCauses(Throwable t)
+	{
+		List causes = new LinkedList();
+		for (Throwable next = t; next.getCause() != null; causes.add(next))
+			next = next.getCause();
+
+		return causes;
+	}
+
+	public List getTestOutput(ITestResult result)
+	{
+		return Reporter.getOutput(result);
+	}
+
+	public List getAllOutput()
+	{
+		return Reporter.getOutput();
+	}
+
+	public boolean hasArguments(ITestResult result)
+	{
+		return result.getParameters().length > 0;
+	}
+
+	public String getArguments(ITestResult result)
+	{
+		Object arguments[] = result.getParameters();
+		List argumentStrings = new ArrayList(arguments.length);
+		Object aobj[];
+		int j = (aobj = arguments).length;
+		for (int i = 0; i < j; i++)
+		{
+			Object argument = aobj[i];
+			argumentStrings.add(renderArgument(argument));
+		}
+
+		return commaSeparate(argumentStrings);
+	}
+
+	private String renderArgument(Object argument)
+	{
+		if (argument == null)
+			return "null";
+		if (argument instanceof String)
+			return (new StringBuilder("\"")).append(argument).append("\"").toString();
+		if (argument instanceof Character)
+			return (new StringBuilder("'")).append(argument).append("'").toString();
+		else
+			return argument.toString();
+	}
+
+	public boolean hasDependentGroups(ITestResult result)
+	{
+		return result.getMethod().getGroupsDependedUpon().length > 0;
+	}
+
+	public String getDependentGroups(ITestResult result)
+	{
+		String groups[] = result.getMethod().getGroupsDependedUpon();
+		return commaSeparate(Arrays.asList(groups));
+	}
+
+	public boolean hasDependentMethods(ITestResult result)
+	{
+		return result.getMethod().getMethodsDependedUpon().length > 0;
+	}
+
+	public String getDependentMethods(ITestResult result)
+	{
+		String methods[] = result.getMethod().getMethodsDependedUpon();
+		return commaSeparate(Arrays.asList(methods));
+	}
+
+	public boolean hasGroups(ISuite suite)
+	{
+		return !suite.getMethodsByGroups().isEmpty();
+	}
+
+	private String commaSeparate(Collection strings)
+	{
+		StringBuilder buffer = new StringBuilder();
+		for (Iterator iterator = strings.iterator(); iterator.hasNext();)
+		{
+			String string = (String)iterator.next();
+			buffer.append(string);
+			if (iterator.hasNext())
+				buffer.append(", ");
+		}
+
+		return buffer.toString();
+	}
+
+	public String escapeString(String s)
+	{
+		if (s == null)
+			return null;
+		StringBuilder buffer = new StringBuilder();
+		for (int i = 0; i < s.length(); i++)
+			buffer.append(escapeChar(s.charAt(i)));
+
+		return buffer.toString();
+	}
+
+	private String escapeChar(char character)
+	{
+		switch (character)
+		{
+		case 60: // '<'
+			return "&lt;";
+
+		case 62: // '>'
+			return "&gt;";
+
+		case 34: // '"'
+			return "&quot;";
+
+		case 39: // '\''
+			return "&apos;";
+
+		case 38: // '&'
+			return "&amp;";
+		}
+		return String.valueOf(character);
+	}
+
+	public String escapeHTMLString(String s)
+	{
+		if (s == null)
+			return null;
+		StringBuilder buffer = new StringBuilder();
+		for (int i = 0; i < s.length(); i++)
+		{
+			char ch = s.charAt(i);
+			switch (ch)
+			{
+			case 32: // ' '
+				char nextCh = i + 1 < s.length() ? s.charAt(i + 1) : '\0';
+				buffer.append(nextCh == ' ' ? "&nbsp;" : " ");
+				break;
+
+			case 10: // '\n'
+				buffer.append("<br/>\n");
+				break;
+
+			default:
+				buffer.append(escapeChar(ch));
+				break;
+			}
+		}
+
+		return buffer.toString();
+	}
+
+	public String stripThreadName(String threadId)
+	{
+		if (threadId == null)
+		{
+			return null;
+		} else
+		{
+			int index = threadId.lastIndexOf('@');
+			return index >= 0 ? threadId.substring(0, index) : threadId;
+		}
+	}
+
+	public long getStartTime(List methods)
+	{
+		long startTime = System.currentTimeMillis();
+		for (Iterator iterator = methods.iterator(); iterator.hasNext();)
+		{
+			ITestNGMethod method = (ITestNGMethod)iterator.next();
+			startTime = Math.min(startTime, method.getDate());
+		}
+
+		return startTime;
+	}
+
+	public long getEndTime(ISuite suite, ITestNGMethod method, List methods)
+	{
+		boolean found = false;
+		for (Iterator iterator = methods.iterator(); iterator.hasNext();)
+		{
+			ITestNGMethod m = (ITestNGMethod)iterator.next();
+			if (m == method)
+				found = true;
+			else
+			if (found && m.getId().equals(method.getId()))
+				return m.getDate();
+		}
+
+		return getEndTime(suite, method);
+	}
+
+	private long getEndTime(ISuite suite, ITestNGMethod method)
+	{
+		for (Iterator iterator = suite.getResults().entrySet().iterator(); iterator.hasNext();)
+		{
+			java.util.Map.Entry entry = (java.util.Map.Entry)iterator.next();
+			ITestContext testContext = ((ISuiteResult)entry.getValue()).getTestContext();
+			ITestNGMethod aitestngmethod[];
+			int j = (aitestngmethod = testContext.getAllTestMethods()).length;
+			for (int i = 0; i < j; i++)
+			{
+				ITestNGMethod m = aitestngmethod[i];
+				if (method == m)
+					return testContext.getEndDate().getTime();
+			}
+
+			for (Iterator iterator1 = testContext.getPassedConfigurations().getAllMethods().iterator(); iterator1.hasNext();)
+			{
+				ITestNGMethod m = (ITestNGMethod)iterator1.next();
+				if (method == m)
+					return testContext.getEndDate().getTime();
+			}
+
+			for (Iterator iterator2 = testContext.getFailedConfigurations().getAllMethods().iterator(); iterator2.hasNext();)
+			{
+				ITestNGMethod m = (ITestNGMethod)iterator2.next();
+				if (method == m)
+					return testContext.getEndDate().getTime();
+			}
+
+		}
+
+		throw new IllegalStateException("Could not find matching end time.");
+	}
+
+	public String getScreenshot(String testname)
+	{
+		return (String)Comm.testNameInvokeImg.get(testname);
+	}
+
+	public String getOperateStep()
+	{
+		String s = "";
+		for (int i = 0; i < Comm.operateStep.size(); i++)
+		{
+			s = (new StringBuilder(String.valueOf(s))).append("<p>").toString();
+			s = (new StringBuilder(String.valueOf(s))).append((String)Comm.operateStep.get(i)).toString();
+		}
+
+		return s;
+	}
+
+}

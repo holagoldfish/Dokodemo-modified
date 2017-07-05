@@ -1,0 +1,29 @@
+package page;
+
+import com.zendaimoney.Dokodemo.html.NoWaitElement;
+import com.zendaimoney.Dokodemo.html.PageModel;
+
+
+public class AlertPage extends PageModel{
+	
+	public NoWaitElement alert=new NoWaitElement("input[id=alert]", this, "alert", "alert");
+	
+	public NoWaitElement prompt=new NoWaitElement("input[id=kw1]", this, "wd", "搜索");
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	public AlertPage(String selector, PageModel parent, String name,
+			String description) {
+		super(selector, parent, name, description);
+		// TODO Auto-generated constructor stub
+	}
+
+}

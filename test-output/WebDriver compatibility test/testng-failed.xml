@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite thread-count="4" name="Failed suite [WebDriver compatibility test]" parallel="tests">
+  <listeners>
+    <listener class-name="org.uncommons.reportng.HTMLReporter"/>
+    <listener class-name="org.uncommons.reportng.JUnitXMLReporter"/>
+  </listeners>
+  <test name="FortunecustomerText(failed)" parallel="tests">
+    <classes>
+      <class name="cases.FortunecustomerText">
+        <methods>
+          <include name="setUp"/>
+          <include name="InputRightPwdTest"/>
+          <include name="tearDown"/>
+        </methods>
+      </class> <!-- cases.FortunecustomerText -->
+    </classes>
+  </test> <!-- FortunecustomerText(failed) -->
+</suite> <!-- Failed suite [WebDriver compatibility test] -->

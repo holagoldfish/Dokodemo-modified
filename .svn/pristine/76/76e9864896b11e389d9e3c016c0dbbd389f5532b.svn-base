@@ -1,0 +1,60 @@
+package com.zendaimoney.Dokodemo.testcase;
+
+
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import com.zendaimoney.Dokodemo.ETestWebUIBaseCase;
+import com.zendaimoney.Dokodemo.engine.Browser;
+
+
+import com.zendaimoney.Dokodemo.page.FortunePage;
+import com.zendaimoney.Dokodemo.page.LoginPage;
+import com.zendaimoney.Dokodemo.util.BrowserUtil;
+
+
+
+
+public class FortuneTest extends ETestWebUIBaseCase{
+	@BeforeClass
+	public static void SetUp() throws Exception{
+		BrowserUtil.close_all_ies();
+		
+	}
+//	
+//	@AfterClass
+//	public static void TearDown() throws InterruptedException{
+//		BrowserUtil.close_all_ies();
+//		
+//	}
+
+	
+	
+	
+	@Test
+	public void test_demo1() throws Exception {
+		
+		Browser ie=Browser.start("http://192.16.220.212:8080/carfortune");
+		LoginPage login=ie.cast(com.zendaimoney.Dokodemo.page.LoginPage.class);
+		login.username.set("hyfortune77");
+		login.password.set("123456");
+		login.dologin.click();
+		sleep(2);
+		ie.go_to("http://192.16.220.212:8080/carfortune/fortune/invest_list?flowId=02000002");
+		FortunePage fortune = ie.cast(com.zendaimoney.Dokodemo.page.FortunePage.class);
+//		fortune.business.click();
+//		fortune.invest.click();
+		
+//		fortune.frame.lists.get(1).choice.click();
+//		fortune.frame.lists.get(5).choice.click();
+//		System.out.println(fortune.lists.exist());
+		fortune.lists.get(1).choice.click();
+		fortune.lists.get(3).choice.click();
+
+	}
+	
+	
+	
+}
